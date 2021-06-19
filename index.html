@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact</title>
+    <style>
+        *,
+        ::before,
+        ::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            line-height: 1.5;
+        }
+
+        body {
+            background-color: #255c7d;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+        }
+
+        form {
+            width: clamp(40vw, 90vw, 60em);
+            padding: 2rem 1rem;
+            margin: 0 auto;
+        }
+
+        label,
+        input,
+        textarea {
+            display: block;
+            width: 100%;
+        }
+
+        input,
+        textarea {
+            padding: .625rem;
+            border: none;
+            border-radius: 0;
+            transition: border 250ms linear;
+            transition-delay: 200ms;
+        }
+
+        input:focus,
+        textarea:focus {
+            border: 1px solid #000;
+        }
+
+        textarea {
+            min-height: 20ch;
+        }
+
+        input:not([type="submit"]),
+        textarea {
+            margin: 0 0 1rem 0;
+        }
+
+        [type="submit"] {
+            font-size: large;
+            transition: background 250ms ease-in-out;
+            transition-delay: 200ms;
+        }
+
+        [type="submit"]:hover {
+            background-color: #488dce;
+            color: ivory;
+        }
+        [type="submit"]:focus {
+            background-color: #799fec;
+        }
+    </style>
+</head>
+
+<body>
+    <form action="" method="post" id="contact">
+        <legend>
+            <h2>Send a message today</h2>
+        </legend>
+        <label for="names">Names<input type="text" required /></label>
+        <label for="email">Email<input type="email" required /></label>
+        <label for="message">Your Message<textarea name="message" id="message" required></textarea></label>
+        <input type="submit" value="Send Message" />
+    </form>
+    <script>
+        document.querySelector('#contact').addEventListener('submit', function(e) {
+            // save data to localSorage first
+            if (!window.localStorage) {
+                alert('LocalStorage is not supported. Data will not be cached')
+            } else {
+                const LS = window.localStorage
+                let personNames = document.querySelector('input[type="text"]').value
+                let email = document.querySelector('input[type="email"]').value
+                let message = document.querySelector('textarea').value
+                LS.setItem('names', personNames)
+                LS.setItem('email', email)
+                LS.setItem('message', message)
+                console.log(`Hello ${LS.names}. Your email is ${email}, and your message ${message}`)
+            }
+            // Send the data to POST endpoint
+        })
+        // USe Fetch to submit
+        const handleSubmit = (e) => {
+            e.preventDefault();
+            let myForm = document.querySelector('#contact');
+            let formData = new FormData(myForm);
+            fetch('/form.php', {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams(formData).toString()
+            }).then(() => console.log('Form successfully submitted')).catch((error) =>
+                alert(error))
+        };
+        document.querySelector('#contact').addEventListener("submit", handleSubmit);
+    </script>
+</body>
+
+</html>
